@@ -45,6 +45,5 @@ io.on("connection", client => {
   });
 });
 
-const port = 3000;
-io.listen(port);
-console.log("listening on port", port);
+const PORT = process.env.PORT || 3000;
+io.listen(PORT, () => console.log("listening on port", PORT));
