@@ -13,6 +13,9 @@ function registerClient(client) {
       console.log(`client '${client.id}' registered with name: ${name}`);
 
       io.emit("onlineUsers", onlineUsers);
+    } else {
+      console.log("Ikke registrert!");
+      console.log(onlineUsers);
     }
   });
 }
