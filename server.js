@@ -10,7 +10,7 @@ function registerClient(client) {
   client.on("register", name => {
     if (
       !onlineUsers.find(
-        user => user.id === client.id || user.name === client.name
+        user => user.id === client.id && user.name === client.name
       )
     ) {
       onlineUsers.push({ id: client.id, name });
