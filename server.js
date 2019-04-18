@@ -39,6 +39,7 @@ function unregisterClient(client) {
 function setOnlineStatus(client) {
   client.on("status", status => {
     onlineUsers.find(user => user.id === client.id).status = status;
+    io.emit("onlineUsers", onlineUsers);
   });
 }
 
