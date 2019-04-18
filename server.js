@@ -7,9 +7,9 @@ function onConnect(client) {
 }
 
 function registerClient(client) {
-  client.on("register", name => {
+  client.on("register", ({ name, imgId }) => {
     if (!onlineUsers.find(user => user.id === client.id)) {
-      onlineUsers.push({ id: client.id, name });
+      onlineUsers.push({ id: client.id, name, imgId });
       console.log(`client '${client.id}' registered with name: ${name}`);
 
       io.emit("onlineUsers", onlineUsers);
