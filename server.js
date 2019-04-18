@@ -9,7 +9,12 @@ function onConnect(client) {
 function registerClient(client) {
   client.on("register", ({ name, imgId }) => {
     if (!onlineUsers.find(user => user.id === client.id)) {
-      onlineUsers.push({ id: client.id, name, imgId });
+      onlineUsers.push({
+        id: client.id,
+        name,
+        imgId,
+        status: "online"
+      });
       console.log(`client '${client.id}' registered with name: ${name}`);
 
       io.emit("onlineUsers", onlineUsers);
@@ -31,9 +36,16 @@ function unregisterClient(client) {
   }
 }
 
+function setOnlineStatus(client) {
+  client.on("status", status => {
+    onlineUsers.find(user => user.id === client.id).status = status;
+  });
+}
+
 io.on("connection", client => {
   onConnect(client);
   registerClient(client);
+  setOnlineStatus(client);
 
   client.on("chat", msg => {
     console.log("received message =>", msg);
