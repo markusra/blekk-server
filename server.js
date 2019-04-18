@@ -45,6 +45,9 @@ function setOnlineStatus(client) {
 function addToLastTenMessages(message) {
   if (lastTenMessages.length < 10) {
     lastTenMessages.push(message);
+  } else {
+    lastTenMessages.shift();
+    lastTenMessages.push(message);
   }
 }
 
