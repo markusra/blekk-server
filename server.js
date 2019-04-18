@@ -1,5 +1,6 @@
 const io = require("socket.io")();
 
+let lastTenMessages = [];
 let onlineUsers = [];
 
 function onConnect(client) {
@@ -18,9 +19,7 @@ function registerClient(client) {
       console.log(`client '${client.id}' registered with name: ${name}`);
 
       io.emit("onlineUsers", onlineUsers);
-    } else {
-      console.log("Ikke registrert!");
-      console.log(onlineUsers);
+      io.emit("lastTenMessages", lastTenMessages);
     }
   });
 }
@@ -43,14 +42,22 @@ function setOnlineStatus(client) {
   });
 }
 
+function addToLastTenMessages(message) {
+  if (lastTenMessages.length < 10) {
+    lastTenMessages.push(message);
+  }
+}
+
 io.on("connection", client => {
   onConnect(client);
   registerClient(client);
   setOnlineStatus(client);
 
-  client.on("chat", msg => {
+  client.on("message", msg => {
     console.log("received message =>", msg);
-    io.emit("chat", msg);
+
+    addToLastTenMessages(msg);
+    io.emit("message", msg);
   });
 
   client.on("disconnect", function() {
