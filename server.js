@@ -63,7 +63,7 @@ io.on("connection", client => {
     io.emit("message", msg);
   });
 
-  client.on("disconnect", function() {
+  client.on("disconnect", function () {
     console.log(`client disconnected => clientID: ${client.id}`);
 
     unregisterClient(client);
