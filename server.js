@@ -2,6 +2,7 @@ const io = require("socket.io")();
 
 let lastTenMessages = [];
 let onlineUsers = [];
+let typingUsers = [];
 
 function onConnect(client) {
   console.log("client connected =>", client.id);
@@ -51,10 +52,31 @@ function addToLastTenMessages(message) {
   }
 }
 
+function setIsTyping(client) {
+  client.on("setIsTyping", message => {
+    if (message.isTyping) {
+      if (!typingUsers.find(username => username === message.username)) {
+        typingUsers.push(message.username);
+      }
+    }
+
+    if (!message.isTyping) {
+      if (typingUsers.find(username => username === message.username)) {
+        const updatedtypingUsers = typingUsers.filter(
+          username => username !== message.username
+        );
+
+        typingUsers = updatedtypingUsers;
+      }
+    }
+  });
+}
+
 io.on("connection", client => {
   onConnect(client);
   registerClient(client);
   setOnlineStatus(client);
+  setIsTyping(client);
 
   client.on("message", msg => {
     console.log("received message =>", msg);
