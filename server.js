@@ -57,6 +57,8 @@ function setIsTyping(client) {
     if (message.isTyping) {
       if (!typingUsers.find(username => username === message.username)) {
         typingUsers.push(message.username);
+
+        io.emit("typingUsers", typingUsers);
       }
     }
 
@@ -65,8 +67,9 @@ function setIsTyping(client) {
         const updatedtypingUsers = typingUsers.filter(
           username => username !== message.username
         );
-
         typingUsers = updatedtypingUsers;
+
+        io.emit("typingUsers", typingUsers);
       }
     }
   });
