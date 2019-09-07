@@ -9,13 +9,14 @@ function onConnect(client) {
 }
 
 function registerClient(client) {
-  client.on("register", ({ name, imgId }) => {
+  client.on("register", ({ name, imgId, statusText = "" }) => {
     if (!onlineUsers.find(user => user.id === client.id)) {
       onlineUsers.push({
         id: client.id,
         name,
         imgId,
-        status: "online"
+        status: "online",
+        statusText,
       });
       console.log(`client '${client.id}' registered with name: ${name}`);
 
@@ -39,6 +40,13 @@ function unregisterClient(client) {
 function setOnlineStatus(client) {
   client.on("status", status => {
     onlineUsers.find(user => user.id === client.id).status = status;
+    io.emit("onlineUsers", onlineUsers);
+  });
+}
+
+function setStatusText(client) {
+  client.on("setStatusText", statusText => {
+    onlineUsers.find(user => user.id === client.id).statusText = statusText;
     io.emit("onlineUsers", onlineUsers);
   });
 }
@@ -79,6 +87,7 @@ io.on("connection", client => {
   onConnect(client);
   registerClient(client);
   setOnlineStatus(client);
+  setStatusText(client);
   setIsTyping(client);
 
   client.on("message", msg => {
