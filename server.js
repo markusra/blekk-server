@@ -13,12 +13,12 @@ function registerClient(client) {
     if (!onlineUsers.find(user => user.id === client.id)) {
       onlineUsers.push({
         id: client.id,
-        name,
+        name: name.substring(0, 20),
         imgId,
         status: "online",
         statusText,
       });
-      console.log(`client '${client.id}' registered with name: ${name}`);
+      console.log(`client '${client.id}' registered with name: ${name.substring(0, 20)}`);
 
       io.emit("onlineUsers", onlineUsers);
       io.emit("lastTenMessages", lastTenMessages);
@@ -46,6 +46,9 @@ function setOnlineStatus(client) {
 
 function setStatusText(client) {
   client.on("setStatusText", statusText => {
+    if (statusText.length > 50) {
+      statusText = statusText.substring(0, 50) + "...";
+    }
     onlineUsers.find(user => user.id === client.id).statusText = statusText;
     io.emit("onlineUsers", onlineUsers);
   });
