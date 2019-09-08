@@ -46,10 +46,9 @@ function setOnlineStatus(client) {
 
 function setStatusText(client) {
   client.on("setStatusText", statusText => {
-    if (statusText.length > 50) {
-      statusText = statusText.substring(0, 50) + "...";
-    }
-    onlineUsers.find(user => user.id === client.id).statusText = statusText;
+    onlineUsers.find(user => user.id === client.id).statusText = (statusText.length > 50)
+      ? statusText.substring(0, 50) + "..."
+      : statusText;
     io.emit("onlineUsers", onlineUsers);
   });
 }
