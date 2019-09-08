@@ -8,15 +8,21 @@ function onConnect(client) {
   console.log("client connected =>", client.id);
 }
 
+const validateStatusText = statusText => (statusText.length > 50)
+  ? statusText.substring(0, 50) + "..."
+  : statusText;
+
 function registerClient(client) {
   client.on("register", ({ name, imgId, statusText = "" }) => {
     if (!onlineUsers.find(user => user.id === client.id)) {
+      const validatedStatusText = validateStatusText(statusText);
+
       onlineUsers.push({
         id: client.id,
         name: name.substring(0, 20),
         imgId,
         status: "online",
-        statusText,
+        statusText: validatedStatusText,
       });
       console.log(`client '${client.id}' registered with name: ${name.substring(0, 20)}`);
 
@@ -46,9 +52,8 @@ function setOnlineStatus(client) {
 
 function setStatusText(client) {
   client.on("setStatusText", statusText => {
-    onlineUsers.find(user => user.id === client.id).statusText = (statusText.length > 50)
-      ? statusText.substring(0, 50) + "..."
-      : statusText;
+    const validatedStatusText = validateStatusText(statusText);
+    onlineUsers.find(user => user.id === client.id).statusText = validatedStatusText;
     io.emit("onlineUsers", onlineUsers);
   });
 }
